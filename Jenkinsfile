@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'my-nodejs-app'
         IMAGE_TAG = 'latest'
+        SKIP_TESTS = false // Add an environment variable to control whether to skip tests
     }
 
     stages {
@@ -16,6 +17,9 @@ pipeline {
             }
         }
         stage('Test') {
+            when {
+                expression { return !env.SKIP_TESTS.toBoolean() }  // Only run tests if SKIP_TESTS is false
+            }
             steps {
                 script {
                     echo 'Running tests...'
@@ -32,13 +36,6 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
-    steps {
-        echo 'Running tests...'
-        bat 'echo "Skipping tests"'
-    }
-}
-
     }
 
     post {
@@ -50,4 +47,3 @@ pipeline {
         }
     }
 }
-
